@@ -219,7 +219,7 @@ elif app_mode == "COVID-19":
         
         with open('dqn_classification2_model.pkl', 'rb') as f:
             covid_model = pickle.load(f)
-        
+            
         features = X.columns.tolist()
         
         col1, col2 = st.columns(2)
@@ -240,27 +240,29 @@ elif app_mode == "COVID-19":
                     step=1,
                     help=f"Enter value for {feature}"
                 )
-
+        
         if st.button("Predict"):
             input_values = [user_inputs[feature] for feature in features]
             scaled_inputs = scaler.transform([input_values])[0]
             prediction = covid_model.choose_action(scaled_inputs)
             
             classifications = {
-                1: "Positive COVID-19",
-                2: "Negative COVID-19",
-                3: "Suspected COVID-19"
+                1: ("Severe COVID-19", "Immediate hospitalization required. Contact emergency services. Strict isolation necessary."),
+                2: ("Moderate COVID-19", "Self-isolate at home. Monitor symptoms carefully. Maintain regular contact with healthcare provider."),
+                3: ("Mild COVID-19", "Rest at home. Monitor symptoms. Take over-the-counter medications as needed. Contact doctor if symptoms worsen."),
+                4: ("Negative/Inconclusive", "If symptoms persist, consider retesting in 48-72 hours. Follow general health precautions.")
             }
+            print(prediction)
+            result, recommendation = classifications.get(prediction + 1, ("Unknown", "Please consult a healthcare professional immediately."))
             
-            result = classifications.get(prediction + 1, "Unknown")
-            
-            if result == "Positive COVID-19":
-                st.error(f"Classification Result: {result}")
-            elif result == "Negative COVID-19":
-                st.success(f"Classification Result: {result}")
-            else:
-                st.warning(f"Classification Result: {result}")
+            if prediction < 3:  # COVID positive cases (1-3)
+                st.error(f"Classification: {result}")
+                st.error(f"Recommendation: {recommendation}")
+            elif prediction >= 3:  # Classification 4 (Negative/Inconclusive)
+                st.success(f"Classification: {result}")
+                st.info(f"Recommendation: {recommendation}")
             
             st.warning("This is a preliminary classification. Please consult healthcare professionals for proper diagnosis.")
+
     except Exception as e:
         st.error(f"Error: {str(e)}\nPlease ensure Covid Data 55k.csv and dqn_classification2_model.pkl are present.")
