@@ -266,3 +266,18 @@ elif app_mode == "COVID-19":
 
     except Exception as e:
         st.error(f"Error: {str(e)}\nPlease ensure Covid Data 55k.csv and dqn_classification2_model.pkl are present.")
+    
+    with st.expander("About this Project"):
+        st.write("""
+            This project uses a Deep Q-Network (DQN) to predict COVID-19 severity based on patient data and symptoms.
+            The model was trained on a dataset containing multiple health indicators and their corresponding COVID-19 classifications.
+            
+            The classification levels are:
+            - Level 1: Severe COVID-19 - Requires immediate medical attention
+            - Level 2: Moderate COVID-19 - Requires careful monitoring
+            - Level 3: Mild COVID-19 - Manageable with home care
+            - Level 4 or higher: Negative/Inconclusive - May require retesting
+            
+            Please note that this is a preliminary classification tool and should not replace professional medical diagnosis.
+            Always consult healthcare professionals for proper medical advice and treatment.
+        """)
